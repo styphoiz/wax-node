@@ -8,14 +8,14 @@ NODEOS_HOME=/root/.local/share/eosio/nodeos
 # WAX data folder root on the host running this docker image
 HOST_WAX_HOME=${HOST_WAX_HOME:-`pwd`}
 
-MAINNET_SNAPHOT=https://snapshots-cdn.eossweden.org/wax/2.0/latest
+TESTNET_SNAPHOT=https://snapshots-cdn.eossweden.org/wax-testnet/leap-3.1/latest
 
 function start_from_snapshot {
   mkdir -p $HOST_WAX_HOME/nodeos/data/
   cd $HOST_WAX_HOME/nodeos/data/
   rm *.bin
   rm latest*
-  wget -O latest $MAINNET_SNAPHOT
+  wget -O latest $TESTNET_SNAPHOT
   tar -xvzf latest
   rm latest*
   TGZ_FILES=( *.bin )
@@ -27,7 +27,7 @@ function start_from_snapshot {
       -p 127.0.0.1:8888:8888 \
       -p 9876:9876 \
       waxteam/waxnode:$WAX_VERSION \
-      nodeos --verbose-http-errors --disable-replay-opts --snapshot $NODEOS_HOME/data/$SNAPSHOT
+      nodeos --verbose-http-errors --disable-replay-opts --snapshot $NODEOS_HOME/data/$SNAPSHOT --delete-all-blocks
 }
 
 function start_standard {
@@ -37,7 +37,7 @@ function start_standard {
       -p 127.0.0.1:8888:8888 \
       -p 9876:9876 \
       waxteam/waxnode:$WAX_VERSION \
-      nodeos --genesis-json $NODEOS_HOME/config/genesis.json
+      nodeos --genesis-json $NODEOS_HOME/config/genesis.json --delete-all-blocks
 }
 
 if [ -d "$HOST_WAX_HOME/nodeos/data/state" ]; then
